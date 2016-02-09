@@ -1,4 +1,4 @@
-//     Backbone.Model File Upload v0.0.1
+//     d3 Time Quarter Interval v0.0.1
 //     by Joe Vu - joe.vu@homeslicesolutions.com
 //     For all details and documentation:
 //     https://github.com/homeslicesolutions/d3-time-quarter
