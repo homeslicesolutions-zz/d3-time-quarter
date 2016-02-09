@@ -1,4 +1,4 @@
-//     d3 Time Quarter Interval v0.0.1
+//     d3 Time Quarter Interval v0.0.2
 //     by Joe Vu - joe.vu@homeslicesolutions.com
 //     For all details and documentation:
 //     https://github.com/homeslicesolutions/d3-time-quarter
@@ -11,17 +11,17 @@
       return factory(root, d3);
     });
 
-    // NodeJS/CommonJS
+  // NodeJS/CommonJS
   } else if (typeof exports !== 'undefined') {
     var d3 = require('d3');
     exports = factory(root, d3);
 
     // Browser global
   } else {
-    factory(root, d3);
+    factory(root, root.d3);
   }
 
-}(this, function(d3) {
+}(this, function(root, d3) {
   'use strict';
 
   // Taken directly from "d3"
@@ -155,24 +155,27 @@
 
   // Quarter helpers
   function beginQuarter(date) {
-    return d3.time.year(new Date(date));
+    return d3.time.year(new d3_date(date));
   }
   function offset(date, k) {
-    step(date = new Date(+date), k);
+    step(date = new d3_date(+date), k);
     return date;
   }
   function getQuarterMeta(date) {
     var start = beginQuarter(date),
-      end = offset(new Date(start), 4);
-    var q = 1;
+      end = offset(new d3_date(start), 4);
+    var i=0;
     while(start < end) {
-      var nextQuarter = offset(new Date(start), 1);
-      if (date > start && date < nextQuarter) {
-        return { q: q, start: start, end: nextQuarter };
+      var nextQuarter = offset(new d3_date(start), 1);
+      if (date >= start && date < nextQuarter) {
+        return { index: i, q: i+1, start: start, end: nextQuarter };
       }
-      q++;
+      i++;
       start = nextQuarter;
     }
+  }
+  function getValue(date) {
+    return getQuarterMeta(date).q;
   }
 
   // Time Interval Methods
@@ -183,12 +186,13 @@
     date.setTime(+d3.time.month.offset(date, offset * 3));
   }
   function number(date) {
-    return getQuarterMeta(date).q;
+    return getQuarterMeta(date).index;
   }
 
   // Export
   d3.time.quarter = d3_time_interval(local, step, number);
-  d3.time.quarter.value = number;
+  d3.time.quarters = d3.time.quarter.range;
+  d3.time.quarter.value = getValue;
   d3.time.quarter.meta = getQuarterMeta;
   d3.time.__interval = d3_time_interval;
   d3.time.__date_utc = d3_date_utc;
