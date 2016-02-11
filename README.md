@@ -23,6 +23,23 @@ Returns the Quarter of the given date.
 #### d3.time.quarter.meta(date);
 Returns an object containing metadata of the designated quarter given the date.  The object includes the Quarter value, the Start (floor) of the quarter and the End (ceil) of the quarter.   
 
+## Custom Quarter Interval
+#### d3.time.createCustomQuarter(startDate);
+Returns a new custom time interval 3 months apart when provided with a quarter start date.  
+
+##### Example of use:
+```
+ var d3TimeCustomQuarter = d3.time.createCustomQuarter(new Date('02/01/2015'));
+ 
+ d3TimeCustomQuarter.range(new Date('03/01/2015'), new Date('09/01/2015'));
+ // Should return:
+ // [
+ //   Fri May 01 2015 00:00:00 GMT-0700 (Pacific Daylight Time), 
+ //   Sat Aug 01 2015 00:00:00 GMT-0700 (Pacific Daylight Time)
+ // ]
+ 
+```
+
 ## Aliases
 
 #### d3.time.quarters(start, stop[, step]) 
