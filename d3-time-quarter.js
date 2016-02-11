@@ -1,4 +1,4 @@
-//     Backbone.Model File Upload v0.0.2
+//     Backbone.Model File Upload v0.0.4
 //     by Joe Vu - joe.vu@homeslicesolutions.com
 //     For all details and documentation:
 //     https://github.com/homeslicesolutions/d3-time-quarter
@@ -168,7 +168,7 @@
     }
   }
 
-  QuarterMethods.prototype.value = function(date) {
+  QuarterMethods.prototype.getValue = function(date) {
     return this.getQuarterMeta(date).q;
   };
 
@@ -216,13 +216,19 @@
 
   // Export
   var quarter = new QuarterMethods();
-  d3.time.quarter = d3_time_interval(quarter.local(), quarter.step, quarter.number());
-  d3.time.quarters = d3.time.quarter.range;
+  d3.time.quarter       = d3_time_interval(quarter.local(), quarter.step, quarter.number());
+  d3.time.quarter.value = quarter.getValue.bind(quarter);
+  d3.time.quarter.meta  = quarter.getQuarterMeta.bind(quarter);
+  d3.time.quarters       = d3.time.quarter.range;
 
   // Custom Quarter
   d3.time.createCustomQuarter = function(quarterStart) {
     var customQuarter = new QuarterMethods(quarterStart);
-    return d3_time_interval(customQuarter.local(), customQuarter.step, customQuarter.number());
+
+    var newTimeInterval   = d3_time_interval(customQuarter.local(), customQuarter.step, customQuarter.number());
+    newTimeInterval.value = customQuarter.getValue.bind(customQuarter);
+    newTimeInterval.meta  = customQuarter.getQuarterMeta.bind(customQuarter);
+    return newTimeInterval;
   };
 
   // Misc
