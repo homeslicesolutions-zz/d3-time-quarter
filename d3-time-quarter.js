@@ -1,4 +1,4 @@
-//     d3 Time Quarter Interval v0.0.2
+//     Backbone.Model File Upload v0.0.2
 //     by Joe Vu - joe.vu@homeslicesolutions.com
 //     For all details and documentation:
 //     https://github.com/homeslicesolutions/d3-time-quarter
@@ -11,7 +11,7 @@
       return factory(root, d3);
     });
 
-  // NodeJS/CommonJS
+    // NodeJS/CommonJS
   } else if (typeof exports !== 'undefined') {
     var d3 = require('d3');
     exports = factory(root, d3);
@@ -153,47 +153,79 @@
     };
   }
 
-  // Quarter helpers
-  function beginQuarter(date) {
-    return d3.time.year(new d3_date(date));
+  // Quarter class
+  function QuarterMethods(customQuarterStart) {
+    if (customQuarterStart) {
+      this.getQuarterStart = function(date) {
+        var newQtrStart = new Date(customQuarterStart);
+        if (newQtrStart.getMonth() <= date.getMonth()) {
+          newQtrStart.setFullYear(date.getFullYear());
+        } else {
+          newQtrStart.setFullYear(date.getFullYear() - 1);
+        }
+        return newQtrStart;
+      }
+    }
   }
-  function offset(date, k) {
-    step(date = new d3_date(+date), k);
+
+  QuarterMethods.prototype.value = function(date) {
+    return this.getQuarterMeta(date).q;
+  };
+
+  QuarterMethods.prototype.offset = function(date, k) {
+    this.step(date = new d3_date(+date), k);
     return date;
-  }
-  function getQuarterMeta(date) {
-    var start = beginQuarter(date),
-      end = offset(new d3_date(start), 4);
-    var i=0;
-    while(start < end) {
-      var nextQuarter = offset(new d3_date(start), 1);
+  };
+
+  QuarterMethods.prototype.local = function() {
+    var that = this;
+    return function(date) {
+      return that.getQuarterMeta.call(that, date).start
+    };
+  };
+
+  QuarterMethods.prototype.step = function(date, offset) {
+    date.setMonth(date.getMonth() + (offset * 3));
+  };
+
+  QuarterMethods.prototype.number = function() {
+    var that = this;
+    return function(date) {
+      return that.getQuarterMeta.call(that, date).index
+    };
+  };
+
+  QuarterMethods.prototype.getQuarterStart = function(date) {
+    return d3.time.year(new d3_date(date));
+  };
+
+  QuarterMethods.prototype.getQuarterMeta = QuarterMethods.prototype.meta = function(date) {
+    var start = this.getQuarterStart(date);
+    var end = this.offset(new d3_date(start), 4);
+    var i = 0;
+    while (start < end) {
+      var nextQuarter = this.offset(new d3_date(start), 1);
       if (date >= start && date < nextQuarter) {
-        return { index: i, q: i+1, start: start, end: nextQuarter };
+        return {index: i, q: i + 1, start: start, end: nextQuarter};
       }
       i++;
       start = nextQuarter;
     }
-  }
-  function getValue(date) {
-    return getQuarterMeta(date).q;
-  }
+  };
 
-  // Time Interval Methods
-  function local(date) {
-    return getQuarterMeta(date).start;
-  }
-  function step(date, offset) {
-    date.setTime(+d3.time.month.offset(date, offset * 3));
-  }
-  function number(date) {
-    return getQuarterMeta(date).index;
-  }
 
   // Export
-  d3.time.quarter = d3_time_interval(local, step, number);
+  var quarter = new QuarterMethods();
+  d3.time.quarter = d3_time_interval(quarter.local(), quarter.step, quarter.number());
   d3.time.quarters = d3.time.quarter.range;
-  d3.time.quarter.value = getValue;
-  d3.time.quarter.meta = getQuarterMeta;
+
+  // Custom Quarter
+  d3.time.createCustomQuarter = function(quarterStart) {
+    var customQuarter = new QuarterMethods(quarterStart);
+    return d3_time_interval(customQuarter.local(), customQuarter.step, customQuarter.number());
+  };
+
+  // Misc
   d3.time.__interval = d3_time_interval;
   d3.time.__date_utc = d3_date_utc;
 
