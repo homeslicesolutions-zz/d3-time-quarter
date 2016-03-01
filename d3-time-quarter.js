@@ -1,4 +1,4 @@
-//     Backbone.Model File Upload v0.0.4
+//     Backbone.Model File Upload v0.0.5
 //     by Joe Vu - joe.vu@homeslicesolutions.com
 //     For all details and documentation:
 //     https://github.com/homeslicesolutions/d3-time-quarter
@@ -157,7 +157,7 @@
   function QuarterMethods(customQuarterStart) {
     if (customQuarterStart) {
       this.getQuarterStart = function(date) {
-        var newQtrStart = new Date(customQuarterStart);
+        var newQtrStart = new d3_date(customQuarterStart);
         if (newQtrStart.getMonth() <= date.getMonth()) {
           newQtrStart.setFullYear(date.getFullYear());
         } else {
@@ -180,6 +180,7 @@
   QuarterMethods.prototype.local = function() {
     var that = this;
     return function(date) {
+      date = d3.time.day(date);
       return that.getQuarterMeta.call(that, date).start
     };
   };
