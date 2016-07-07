@@ -1,4 +1,4 @@
-//     Backbone.Model File Upload v0.0.5
+//     Backbone.Model File Upload v0.0.2
 //     by Joe Vu - joe.vu@homeslicesolutions.com
 //     For all details and documentation:
 //     https://github.com/homeslicesolutions/d3-time-quarter
@@ -197,12 +197,14 @@
   };
 
   QuarterMethods.prototype.getQuarterStart = function(date) {
-    return d3.time.year(new d3_date(date));
+    date = d3.time.year(new d3_date(date));
+    return date;
   };
 
   QuarterMethods.prototype.getQuarterMeta = QuarterMethods.prototype.meta = function(date) {
     var start = this.getQuarterStart(date);
     var end = this.offset(new d3_date(start), 4);
+
     var i = 0;
     while (start < end) {
       var nextQuarter = this.offset(new d3_date(start), 1);
@@ -213,7 +215,6 @@
       start = nextQuarter;
     }
   };
-
 
   // Export
   var quarter = new QuarterMethods();
