@@ -1,0 +1,25 @@
+{
+  "name": "d3-time-quarter",
+  "version": "0.0.6",
+  "description": "D3 time quarter interval",
+  "main": "d3-time-quarter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/homeslicesolutions/d3-time-quarter.git"
+  },
+  "keywords": [
+    "d3",
+    "time",
+    "quarter",
+    "interval"
+  ],
+  "author": "Joe Vu <joe.vu@homeslicesolutions.com> (https://github.com/homeslicesolutions)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/homeslicesolutions/d3-time-quarter/issues"
+  },
+  "homepage": "https://github.com/homeslicesolutions/d3-time-quarter#readme"
+}
